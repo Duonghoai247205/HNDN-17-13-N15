@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_cong_viec_user,cong_viec.task.user,model_cong_viec_task,group_cong_viec_user,1,1,0,0
+access_cong_viec_manager,cong_viec.task.manager,model_cong_viec_task,group_cong_viec_manager,1,1,1,0
+access_cong_viec_admin,cong_viec.task.admin,model_cong_viec_task,group_cong_viec_admin,1,1,1,1
+access_cong_viec_tag_user,cong_viec.tag.user,model_cong_viec_tag,group_cong_viec_user,1,0,0,0
+access_cong_viec_tag_manager,cong_viec.tag.manager,model_cong_viec_tag,group_cong_viec_manager,1,1,1,1

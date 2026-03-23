@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Sequence tự động sinh mã công việc -->
+    <record id="seq_cong_viec" model="ir.sequence">
+        <field name="name">Công Việc - Mã Tự Động</field>
+        <field name="code">cong_viec.task</field>
+        <field name="prefix">CV-%(year)s-</field>
+        <field name="padding">5</field>
+        <field name="number_next">1</field>
+        <field name="number_increment">1</field>
+    </record>
+
+    <!-- Nhãn mặc định -->
+    <record id="tag_dev" model="cong_viec.tag">
+        <field name="name">Lập Trình</field>
+        <field name="color">1</field>
+    </record>
+    <record id="tag_test" model="cong_viec.tag">
+        <field name="name">Kiểm Thử</field>
+        <field name="color">2</field>
+    </record>
+    <record id="tag_design" model="cong_viec.tag">
+        <field name="name">Thiết Kế</field>
+        <field name="color">4</field>
+    </record>
+    <record id="tag_doc" model="cong_viec.tag">
+        <field name="name">Tài Liệu</field>
+        <field name="color">6</field>
+    </record>
+    <record id="tag_meeting" model="cong_viec.tag">
+        <field name="name">Họp / Báo Cáo</field>
+        <field name="color">8</field>
+    </record>
+    <record id="tag_urgent" model="cong_viec.tag">
+        <field name="name">Khẩn Cấp</field>
+        <field name="color">9</field>
+    </record>
+
+</odoo>

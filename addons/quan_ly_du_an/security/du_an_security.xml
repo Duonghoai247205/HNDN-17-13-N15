@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record model="ir.module.category" id="module_category_du_an">
+        <field name="name">Quản Lý Dự Án</field>
+        <field name="sequence">10</field>
+    </record>
+
+    <!-- ========== NHÓM QUYỀN MODULE DỰ ÁN ========== -->
+    <record id="group_du_an_user" model="res.groups">
+        <field name="name">Nhân Viên Dự Án</field>
+        <field name="category_id" ref="module_category_du_an"/>
+        <field name="comment">Xem và tham gia dự án, xem công việc được giao</field>
+    </record>
+
+    <record id="group_du_an_manager" model="res.groups">
+        <field name="name">Quản Lý Dự Án</field>
+        <field name="category_id" ref="module_category_du_an"/>
+        <field name="implied_ids" eval="[(4, ref('group_du_an_user'))]"/>
+        <field name="comment">Tạo, sửa, xóa dự án. Phân công nhân viên. Xem báo cáo.</field>
+    </record>
+
+    <record id="group_du_an_admin" model="res.groups">
+        <field name="name">Quản Trị Dự Án</field>
+        <field name="category_id" ref="module_category_du_an"/>
+        <field name="implied_ids" eval="[(4, ref('group_du_an_manager'))]"/>
+        <field name="comment">Toàn quyền quản lý dự án, bao gồm xóa và cấu hình hệ thống.</field>
+        <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+    </record>
+
+</odoo>

@@ -11,8 +11,8 @@ class NhanVien(models.Model):
     ho_ten = fields.Char("Họ và tên", compute='_tinh_ho_va_ten', store=True) #Luu vao 
     
     # projects_ids = fields.Many2many('projects', string='Dự án')
-    projects_id = fields.Many2one('projects', string='Quản lý dự án')
-    taskss_ids = fields.Many2many('taskss', string='Công việc được giao')
+    # projects_id = fields.Many2one('projects', string='Quản lý dự án')
+    # taskss_ids = fields.Many2many('taskss', string='Công việc được giao')
 
     ngay_sinh = fields.Date("Ngày sinh")
     gioi_tinh = fields.Selection(
@@ -38,6 +38,9 @@ class NhanVien(models.Model):
 
     ho_ten_dem = fields.Char("Họ tên đệm")
     ten = fields.Char("Tên")
+    
+    # AI Skills Profiling
+    ky_nang = fields.Text(string="Kỹ năng chính", help="Nhập các kỹ năng của bản thân (Ví dụ: Python, AI, Giao tiếp...)")
 
     @api.depends("ho_ten_dem", "ten")
     def _tinh_ho_va_ten(self):

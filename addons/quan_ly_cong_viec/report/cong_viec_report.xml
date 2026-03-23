@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ========== PIVOT VIEW BÁO CÁO ========== -->
+    <record id="view_cong_viec_pivot" model="ir.ui.view">
+        <field name="name">cong_viec.task.pivot</field>
+        <field name="model">cong_viec.task</field>
+        <field name="arch" type="xml">
+            <pivot string="Thống Kê Công Việc">
+                <field name="employee_id" type="row"/>
+                <field name="state" type="col"/>
+                <field name="duration_planned" type="measure"/>
+                <field name="duration_actual" type="measure"/>
+                <field name="progress" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- ========== GRAPH VIEW BÁO CÁO ========== -->
+    <record id="view_cong_viec_graph" model="ir.ui.view">
+        <field name="name">cong_viec.task.graph</field>
+        <field name="model">cong_viec.task</field>
+        <field name="arch" type="xml">
+            <graph string="Thống Kê Công Việc" type="bar">
+                <field name="employee_id" type="row"/>
+                <field name="state" type="col"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- ========== ACTION BÁO CÁO HIỆU QUẢ NHÂN SỰ ========== -->
+    <record id="action_cong_viec_report" model="ir.actions.act_window">
+        <field name="name">Báo Cáo Hiệu Quả Nhân Sự</field>
+        <field name="res_model">cong_viec.task</field>
+        <field name="view_mode">pivot,graph,list</field>
+        <field name="domain">[('state', '=', 'done')]</field>
+        <field name="context">{'group_by': 'employee_id'}</field>
+    </record>
+
+    <!-- ========== ACTION: CÔNG VIỆC CỦA TÔI ========== -->
+    <record id="action_cong_viec_my" model="ir.actions.act_window">
+        <field name="name">Công Việc Của Tôi</field>
+        <field name="res_model">cong_viec.task</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="domain">[('employee_id.user_id', '=', uid)]</field>
+        <field name="context">{'search_default_in_progress': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Bạn chưa có công việc nào được giao
+            </p>
+        </field>
+    </record>
+
+</odoo>

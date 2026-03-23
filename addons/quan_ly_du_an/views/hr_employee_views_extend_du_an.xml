@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!--
+        Mở rộng form nhân viên (hr.employee):
+        Thêm thống kê dự án vào button_box và bổ sung tab Dự Án vào tab Công Việc.
+        Module quan_ly_du_an bổ sung phần liên quan đến dự án (yêu cầu quan_ly_cong_viec đã cài).
+    -->
+    <record id="view_employee_form_inherit_du_an" model="ir.ui.view">
+        <field name="name">nhan_vien.form.inherit.du_an</field>
+        <field name="model">nhan_vien</field>
+        <field name="inherit_id" ref="nhan_su.view_nhan_vien_form"/>
+        <field name="arch" type="xml">
+
+            <!-- Thêm nút thống kê Dự Án vào button_box -->
+            <div name="button_box" position="inside">
+                <button name="action_view_du_an" type="object"
+                        class="oe_stat_button" icon="fa-folder-open"
+                        groups="quan_ly_du_an.group_du_an_user">
+                    <field name="du_an_count" widget="statinfo" string="Dự Án"/>
+                </button>
+                <button name="action_ai_recommend_tasks" type="object"
+                        class="oe_stat_button" icon="fa-magic">
+                    <div class="o_stat_info">
+                        <span class="o_stat_text">AI Gợi ý</span>
+                        <span class="o_stat_text">Công việc</span>
+                    </div>
+                </button>
+                <button name="action_ai_recommend_projects" type="object"
+                        class="oe_stat_button" icon="fa-magic">
+                    <div class="o_stat_info">
+                        <span class="o_stat_text">AI Gợi ý</span>
+                        <span class="o_stat_text">Dự án</span>
+                    </div>
+                </button>
+            </div>
+
+            <!-- Thêm dự án vào danh sách công việc của nhân viên -->
+            <xpath expr="//field[@name='task_ids']/tree/field[@name='name']" position="after">
+                <field name="project_id"/>
+            </xpath>
+
+            <!-- Thêm nội dung Dự Án vào tab cong_viec_tab đã tạo bởi quan_ly_cong_viec -->
+            <page name="cong_viec_tab" position="inside">
+                <separator string="Dự Án Tham Gia"/>
+                <field name="du_an_ids" readonly="1">
+                    <tree string="Dự Án Tham Gia">
+                        <field name="code"/>
+                        <field name="name"/>
+                        <field name="manager_id"/>
+                        <field name="date_start"/>
+                        <field name="date_end"/>
+                        <field name="state" widget="badge"
+                               decoration-info="state == 'draft'"
+                               decoration-warning="state == 'confirmed'"
+                               decoration-primary="state == 'in_progress'"
+                               decoration-success="state == 'done'"
+                               decoration-danger="state == 'cancelled'"/>
+                        <field name="completion_rate" widget="progressbar"/>
+                    </tree>
+                </field>
+
+                <separator string="Dự Án Quản Lý"/>
+                <field name="du_an_quan_ly_ids" readonly="1">
+                    <tree string="Dự Án Quản Lý">
+                        <field name="code"/>
+                        <field name="name"/>
+                        <field name="date_start"/>
+                        <field name="date_end"/>
+                        <field name="state" widget="badge"/>
+                        <field name="task_count" string="Tổng CV"/>
+                        <field name="task_done_count" string="CV Xong"/>
+                        <field name="completion_rate" widget="progressbar"/>
+                    </tree>
+                </field>
+            </page>
+
+        </field>
+    </record>
+
+</odoo>

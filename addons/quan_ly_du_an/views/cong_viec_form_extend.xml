@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!--
+        Mở rộng form Công Việc để thêm các trường liên quan đến Dự Án.
+        Module quan_ly_du_an bổ sung trường project_id vào model cong_viec.task
+        và cần hiển thị chúng trong giao diện.
+    -->
+    <record id="view_cong_viec_form_extend_du_an" model="ir.ui.view">
+        <field name="name">cong_viec.task.form.extend.du_an</field>
+        <field name="model">cong_viec.task</field>
+        <field name="inherit_id" ref="quan_ly_cong_viec.view_cong_viec_form"/>
+        <field name="arch" type="xml">
+
+            <!-- Thêm nhóm Dự Án vào sau nhóm Phân Công Nhân Sự -->
+            <group name="hr_info" position="after">
+                <group string="Dự Án" name="project_info">
+                    <field name="project_id" options="{'no_create': True}"/>
+                    <field name="project_manager_id" readonly="1"/>
+                    <field name="project_state" readonly="1" widget="badge"
+                           attrs="{'invisible': [('project_id', '=', False)]}"/>
+                </group>
+            </group>
+
+        </field>
+    </record>
+
+    <!-- Mở rộng Tree View để thêm cột Dự Án -->
+    <record id="view_cong_viec_tree_extend_du_an" model="ir.ui.view">
+        <field name="name">cong_viec.task.tree.extend.du_an</field>
+        <field name="model">cong_viec.task</field>
+        <field name="inherit_id" ref="quan_ly_cong_viec.view_cong_viec_tree"/>
+        <field name="arch" type="xml">
+            <!-- Thêm cột Dự Án vào sau cột employee_id -->
+            <field name="employee_id" position="after">
+                <field name="project_id"/>
+            </field>
+        </field>
+    </record>
+
+    <!-- Mở rộng Search View để thêm filter Dự Án -->
+    <record id="view_cong_viec_search_extend_du_an" model="ir.ui.view">
+        <field name="name">cong_viec.task.search.extend.du_an</field>
+        <field name="model">cong_viec.task</field>
+        <field name="inherit_id" ref="quan_ly_cong_viec.view_cong_viec_search"/>
+        <field name="arch" type="xml">
+            <field name="department_id" position="after">
+                <field name="project_id" string="Dự Án"/>
+            </field>
+            <!-- Thêm group by Dự Án -->
+            <filter name="group_dept" position="after">
+                <filter string="Dự Án" name="group_project"
+                        context="{'group_by': 'project_id'}"/>
+            </filter>
+        </field>
+    </record>
+
+</odoo>

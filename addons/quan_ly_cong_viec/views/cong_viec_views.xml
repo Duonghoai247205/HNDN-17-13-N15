@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ========== FORM VIEW ========== -->
+    <record id="view_cong_viec_form" model="ir.ui.view">
+        <field name="name">cong_viec.task.form</field>
+        <field name="model">cong_viec.task</field>
+        <field name="arch" type="xml">
+            <form string="Công Việc">
+                <header>
+                    <button name="action_start" string="Bắt Đầu Làm" type="object"
+                            class="btn-primary"
+                            attrs="{'invisible': [('state', '!=', 'todo')]}"/>
+                    <button name="action_review" string="Gửi Kiểm Tra" type="object"
+                            class="btn-warning"
+                            attrs="{'invisible': [('state', '!=', 'in_progress')]}"/>
+                    <button name="action_done" string="Hoàn Thành" type="object"
+                            class="btn-success"
+                            attrs="{'invisible': [('state', 'not in', ['in_progress', 'review'])]}"/>
+                    <button name="action_cancel" string="Hủy" type="object"
+                            class="btn-danger"
+                            attrs="{'invisible': [('state', 'in', ['done', 'cancelled'])]}"/>
+                    <button name="action_reset_todo" string="Đặt Lại" type="object"
+                            attrs="{'invisible': [('state', '!=', 'cancelled')]}"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="todo,in_progress,review,done"/>
+                </header>
+
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" placeholder="Tên công việc..."/>
+                        </h1>
+                        <div class="o_row">
+                            <field name="code" readonly="1"/>
+                            <field name="priority" widget="priority"/>
+                            <field name="tag_ids" widget="many2many_tags"
+                                   options="{'color_field': 'color', 'no_create_edit': True}"/>
+                        </div>
+                    </div>
+
+                    <group>
+                        <group string="Phân Công Nhân Sự" name="hr_info">
+                            <field name="employee_id" options="{'no_create': True}"/>
+                            <field name="department_id" readonly="1"/>
+                            <field name="job_id" readonly="1"/>
+                            <field name="reviewer_id" options="{'no_create': True}"/>
+                        </group>
+                        <group string="Thời Gian" name="time_info">
+                            <field name="date_start"/>
+                            <field name="date_deadline"/>
+                            <field name="date_done" readonly="1"
+                                   attrs="{'invisible': [('state', '!=', 'done')]}"/>
+                            <field name="is_overdue" widget="boolean_toggle" readonly="1"
+                                   attrs="{'invisible': [('state', 'in', ['done', 'cancelled'])]}"/>
+                        </group>
+                    </group>
+
+                    <group>
+                        <group string="Công Sức" name="effort_info">
+                            <field name="duration_planned"/>
+                            <field name="duration_actual"/>
+                        </group>
+                        <group string="Tiến Độ" name="progress_info">
+                            <field name="progress" widget="progressbar"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="Mô Tả" name="description">
+                            <field name="description"
+                                   placeholder="Mô tả chi tiết nội dung và yêu cầu công việc..."/>
+                        </page>
+                        <page string="Kết Quả &amp; Đánh Giá" name="result">
+                            <group>
+                                <field name="result"
+                                       placeholder="Mô tả kết quả và sản phẩm bàn giao..."/>
+                                <field name="performance_score" widget="radio"
+                                       attrs="{'readonly': [('state', 'not in', ['review', 'done'])]}"/>
+                            </group>
+                        </page>
+                        <page string="Ghi Chú" name="notes">
+                            <field name="notes"/>
+                        </page>
+                    </notebook>
+                </sheet>
+
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="activity_ids" widget="mail_activity"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- ========== LIST/TREE VIEW ========== -->
+    <record id="view_cong_viec_tree" model="ir.ui.view">
+        <field name="name">cong_viec.task.tree</field>
+        <field name="model">cong_viec.task</field>
+        <field name="arch" type="xml">
+            <tree string="Danh Sách Công Việc"
+                  decoration-danger="is_overdue == True"
+                  decoration-success="state == 'done'"
+                  decoration-muted="state == 'cancelled'">
+                <field name="code"/>
+                <field name="name"/>
+                <field name="employee_id"/>
+                <field name="department_id"/>
+                <field name="date_start"/>
+                <field name="date_deadline"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'todo'"
+                       decoration-primary="state == 'in_progress'"
+                       decoration-warning="state == 'review'"
+                       decoration-success="state == 'done'"
+                       decoration-danger="state == 'cancelled'"/>
+                <field name="priority" widget="priority"/>
+                <field name="progress" widget="progressbar"/>
+                <field name="performance_score"
+                       attrs="{'invisible': [('state', '!=', 'done')]}"/>
+                <field name="is_overdue" invisible="1"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- ========== KANBAN VIEW ========== -->
+    <record id="view_cong_viec_kanban" model="ir.ui.view">
+        <field name="name">cong_viec.task.kanban</field>
+        <field name="model">cong_viec.task</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" class="o_kanban_small_column">
+                <field name="name"/>
+                <field name="state"/>
+                <field name="priority"/>
+                <field name="employee_id"/>
+                <field name="date_deadline"/>
+                <field name="progress"/>
+                <field name="is_overdue"/>
+                <field name="color"/>
+                <field name="tag_ids"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_global_click
+                            #{record.is_overdue.raw_value ? 'border-danger' : ''}"
+                             t-attf-style="border-left: 3px solid
+                             #{kanban_color(record.color.raw_value)}">
+                            <div class="oe_kanban_content">
+                                <div class="o_kanban_record_top">
+                                    <div class="o_kanban_record_headings">
+                                        <strong class="o_kanban_record_title">
+                                            <field name="name"/>
+                                        </strong>
+                                    </div>
+                                    <field name="priority" widget="priority"/>
+                                </div>
+                                <div class="o_kanban_record_body">
+                                    <div>
+                                        <span class="fa fa-calendar"/>
+                                        Hạn: <field name="date_deadline"/>
+                                    </div>
+                                    <div class="mt-1">
+                                        <field name="progress" widget="progressbar"/>
+                                    </div>
+                                    <div t-if="record.tag_ids.raw_value.length > 0">
+                                        <field name="tag_ids" widget="many2many_tags"
+                                               options="{'color_field': 'color'}"/>
+                                    </div>
+                                </div>
+                                <div class="o_kanban_record_bottom">
+                                    <div class="oe_kanban_bottom_left">
+                                        <field name="employee_id"/>
+                                    </div>
+                                    <div class="oe_kanban_bottom_right">
+                                        <span t-if="record.is_overdue.raw_value"
+                                              class="badge badge-danger">Quá Hạn</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- ========== SEARCH VIEW ========== -->
+    <record id="view_cong_viec_search" model="ir.ui.view">
+        <field name="name">cong_viec.task.search</field>
+        <field name="model">cong_viec.task</field>
+        <field name="arch" type="xml">
+            <search string="Tìm Kiếm Công Việc">
+                <field name="name" string="Tên Công Việc"/>
+                <field name="code" string="Mã Công Việc"/>
+                <field name="employee_id" string="Nhân Viên"/>
+                <field name="department_id" string="Phòng Ban"/>
+                <filter string="Cần Làm" name="todo"
+                        domain="[('state', '=', 'todo')]"/>
+                <filter string="Đang Thực Hiện" name="in_progress"
+                        domain="[('state', '=', 'in_progress')]"/>
+                <filter string="Đang Kiểm Tra" name="review"
+                        domain="[('state', '=', 'review')]"/>
+                <filter string="Hoàn Thành" name="done"
+                        domain="[('state', '=', 'done')]"/>
+                <filter string="Quá Hạn" name="overdue"
+                        domain="[('is_overdue', '=', True)]"/>
+
+                <separator/>
+                <group expand="0" string="Nhóm Theo">
+                    <filter string="Trạng Thái" name="group_state"
+                            context="{'group_by': 'state'}"/>
+                    <filter string="Nhân Viên" name="group_employee"
+                            context="{'group_by': 'employee_id'}"/>
+                    <filter string="Phòng Ban" name="group_dept"
+                            context="{'group_by': 'department_id'}"/>
+                    <filter string="Độ Ưu Tiên" name="group_priority"
+                            context="{'group_by': 'priority'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ========== ACTION ========== -->
+    <record id="action_cong_viec" model="ir.actions.act_window">
+        <field name="name">Công Việc</field>
+        <field name="res_model">cong_viec.task</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="search_view_id" ref="view_cong_viec_search"/>
+        <field name="context">{'search_default_in_progress': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Tạo công việc mới
+            </p>
+            <p>
+                Giao việc cho nhân viên, theo dõi tiến độ và đánh giá hiệu quả.
+            </p>
+        </field>
+    </record>
+
+    <!-- ========== TAG VIEW ========== -->
+    <record id="view_cong_viec_tag_tree" model="ir.ui.view">
+        <field name="name">cong_viec.tag.tree</field>
+        <field name="model">cong_viec.tag</field>
+        <field name="arch" type="xml">
+            <tree string="Nhãn Công Việc" editable="bottom">
+                <field name="name"/>
+                <field name="color" widget="color_picker"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_cong_viec_tag" model="ir.actions.act_window">
+        <field name="name">Nhãn Công Việc</field>
+        <field name="res_model">cong_viec.tag</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

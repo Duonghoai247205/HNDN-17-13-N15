@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Sequence tự động sinh mã dự án -->
+    <record id="seq_du_an" model="ir.sequence">
+        <field name="name">Dự Án - Mã Tự Động</field>
+        <field name="code">project.du_an</field>
+        <field name="prefix">DA-%(year)s-</field>
+        <field name="padding">4</field>
+        <field name="number_next">1</field>
+        <field name="number_increment">1</field>
+    </record>
+
+</odoo>

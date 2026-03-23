@@ -30,6 +30,11 @@
                             <page string='Danh sách lịch sử làm việc'>
                                 <field name='lich_su_lam_viec_ids'/>
                             </page>
+                            <page string='Kỹ năng &amp; Kinh nghiệm'>
+                                <group>
+                                    <field name="ky_nang" placeholder="Nhập vào đây các kỹ năng của bạn (Ví dụ: Python, Bán hàng, Tiếng Anh) để hệ thống AI tự động đề xuất công việc phù hợp..."/>
+                                </group>
+                            </page>
                         </notebook>
                     </sheet>
                 </form>

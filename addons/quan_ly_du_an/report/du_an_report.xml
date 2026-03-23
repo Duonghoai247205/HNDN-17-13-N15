@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ========== PIVOT VIEW BÁO CÁO ========== -->
+    <record id="view_du_an_pivot" model="ir.ui.view">
+        <field name="name">project.du_an.pivot</field>
+        <field name="model">project.du_an</field>
+        <field name="arch" type="xml">
+            <pivot string="Tổng Quan Dự Án">
+                <field name="department_id" type="row"/>
+                <field name="state" type="col"/>
+                <field name="task_count" type="measure"/>
+                <field name="task_done_count" type="measure"/>
+                <field name="completion_rate" type="measure"/>
+                <field name="member_count" type="measure"/>
+                <field name="budget" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- ========== GRAPH VIEW BÁO CÁO ========== -->
+    <record id="view_du_an_graph" model="ir.ui.view">
+        <field name="name">project.du_an.graph</field>
+        <field name="model">project.du_an</field>
+        <field name="arch" type="xml">
+            <graph string="Thống Kê Dự Án" type="bar">
+                <field name="state" type="row"/>
+                <field name="task_count" type="measure"/>
+                <field name="completion_rate" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- ========== ACTION BÁO CÁO TỔNG QUAN ========== -->
+    <record id="action_du_an_report" model="ir.actions.act_window">
+        <field name="name">Báo Cáo Tổng Quan Dự Án</field>
+        <field name="res_model">project.du_an</field>
+        <field name="view_mode">pivot,graph,list</field>
+        <field name="context">{}</field>
+    </record>
+
+    <!-- ========== QWeb REPORT IN ẤN ========== -->
+    <record id="action_report_du_an" model="ir.actions.report">
+        <field name="name">Báo Cáo Dự Án</field>
+        <field name="model">project.du_an</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">quan_ly_du_an.report_du_an_pdf</field>
+        <field name="report_file">quan_ly_du_an.report_du_an_pdf</field>
+        <field name="binding_model_id" ref="model_project_du_an"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_du_an_pdf">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2 class="text-center">BÁO CÁO DỰ ÁN</h2>
+                        <h3 class="text-center">
+                            <t t-esc="doc.name"/> (<t t-esc="doc.code"/>)
+                        </h3>
+                        <hr/>
+
+                        <div class="row mt-4">
+                            <div class="col-6">
+                                <strong>Quản Lý Dự Án:</strong>
+                                <t t-esc="doc.manager_id.name"/>
+                            </div>
+                            <div class="col-6">
+                                <strong>Phòng Ban:</strong>
+                                <t t-esc="doc.department_id.name or '---'"/>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-6">
+                                <strong>Ngày Bắt Đầu:</strong>
+                                <t t-esc="doc.date_start"/>
+                            </div>
+                            <div class="col-6">
+                                <strong>Ngày Kết Thúc:</strong>
+                                <t t-esc="doc.date_end"/>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-6">
+                                <strong>Trạng Thái:</strong>
+                                <t t-esc="dict(doc._fields['state'].selection).get(doc.state)"/>
+                            </div>
+                            <div class="col-6">
+                                <strong>Tỷ Lệ Hoàn Thành:</strong>
+                                <t t-esc="'%.1f%%' % doc.completion_rate"/>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-6">
+                                <strong>Ngân Sách:</strong>
+                                <t t-esc="'{:,.0f} VNĐ'.format(doc.budget)"/>
+                            </div>
+                            <div class="col-6">
+                                <strong>Chi Phí Thực Tế:</strong>
+                                <t t-esc="'{:,.0f} VNĐ'.format(doc.actual_cost)"/>
+                            </div>
+                        </div>
+
+                        <h4 class="mt-4">Thành Viên Dự Án</h4>
+                        <table class="table table-bordered table-sm">
+                            <thead>
+                                <tr>
+                                    <th>STT</th>
+                                    <th>Họ Tên</th>
+                                    <th>Chức Vụ</th>
+                                    <th>Phòng Ban</th>
+                                    <th>Công Việc</th>
+                                    <th>Hoàn Thành</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="doc.member_ids" t-as="emp">
+                                    <tr>
+                                        <td><t t-esc="emp_index + 1"/></td>
+                                        <td><t t-esc="emp.name"/></td>
+                                        <td><t t-esc="emp.job_id.name or '---'"/></td>
+                                        <td><t t-esc="emp.department_id.name or '---'"/></td>
+                                        <td>
+                                            <t t-esc="len(doc.task_ids.filtered(lambda t: t.employee_id.id == emp.id))"/>
+                                        </td>
+                                        <td>
+                                            <t t-esc="len(doc.task_ids.filtered(lambda t: t.employee_id.id == emp.id and t.state == 'done'))"/>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+
+                        <h4 class="mt-4">Danh Sách Công Việc</h4>
+                        <table class="table table-bordered table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Mã CV</th>
+                                    <th>Tên Công Việc</th>
+                                    <th>Nhân Viên</th>
+                                    <th>Hạn</th>
+                                    <th>Tiến Độ</th>
+                                    <th>Trạng Thái</th>
+                                    <th>Đánh Giá</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="doc.task_ids" t-as="task">
+                                    <tr>
+                                        <td><t t-esc="task.code"/></td>
+                                        <td><t t-esc="task.name"/></td>
+                                        <td><t t-esc="task.employee_id.name"/></td>
+                                        <td><t t-esc="task.date_deadline or '---'"/></td>
+                                        <td><t t-esc="'%d%%' % task.progress"/></td>
+                                        <td><t t-esc="dict(task._fields['state'].selection).get(task.state)"/></td>
+                                        <td><t t-esc="task.performance_score or '---'"/></td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+
+                        <div class="mt-4">
+                            <strong>Mô Tả:</strong>
+                            <p><t t-esc="doc.description or '---'"/></p>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>

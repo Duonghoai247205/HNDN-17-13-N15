@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Giao diện Danh sách các đoạn chat cũ -->
+    <record id="view_project_ai_chat_tree" model="ir.ui.view">
+        <field name="name">project.ai.chat.tree</field>
+        <field name="model">project.ai.chat</field>
+        <field name="arch" type="xml">
+            <tree string="Lịch sử Trợ Lý AI">
+                <field name="name"/>
+                <field name="user_id"/>
+                <field name="create_date" string="Ngày tương tác"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Giao diện Khung Chat chính -->
+    <record id="view_project_ai_chat_form" model="ir.ui.view">
+        <field name="name">project.ai.chat.form</field>
+        <field name="model">project.ai.chat</field>
+        <field name="arch" type="xml">
+            <form string="Trợ Lý Dự Án AI">
+                <header>
+                    <button name="action_send_message" string="Gửi tin nhắn" type="object" class="oe_highlight"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1" force_save="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <field name="user_id" string="Khách mời"/>
+                        <field name="user_input" placeholder="Ví dụ: Giúp tôi tóm tắt công việc của nhóm hôm nay..." style="min-height: 80px; font-size: 16px;"/>
+                    </group>
+                    <notebook>
+                        <page string="Khung Chat (Lịch sử)">
+                            <field name="message_ids" readonly="1">
+                                <tree>
+                                    <field name="role" widget="badge" decoration-success="role == 'user'" decoration-info="role == 'model'"/>
+                                    <field name="content"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action mở cửa sổ Chat -->
+    <record id="action_project_ai_chat" model="ir.actions.act_window">
+        <field name="name">Trợ Lý Dự Án AI</field>
+        <field name="res_model">project.ai.chat</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Gắn Trợ Lý AI vào thanh Menu trên cùng của App Dự Án -->
+    <menuitem id="menu_project_ai_chat" 
+              name="Trợ Lý AI" 
+              parent="quan_ly_du_an.menu_du_an_root" 
+              action="action_project_ai_chat" 
+              sequence="50"/>
+</odoo>

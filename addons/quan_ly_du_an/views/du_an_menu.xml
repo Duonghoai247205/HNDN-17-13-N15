@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ========== MENU CHÍNH ========== -->
+    <menuitem id="menu_du_an_root"
+              name="Quản Lý Dự Án"
+              sequence="20"
+              web_icon="quan_ly_du_an,static/description/icon.png"
+              groups="quan_ly_du_an.group_du_an_user"/>
+
+    <!-- Dashboard / Tổng Quan -->
+    <menuitem id="menu_du_an_dashboard"
+              name="Tổng Quan"
+              parent="menu_du_an_root"
+              sequence="1"
+              action="action_du_an"/>
+
+    <!-- ========== QUẢN LÝ DỰ ÁN ========== -->
+    <menuitem id="menu_du_an_projects"
+              name="Dự Án"
+              parent="menu_du_an_root"
+              sequence="10"/>
+
+    <menuitem id="menu_du_an_list"
+              name="Danh Sách Dự Án"
+              parent="menu_du_an_projects"
+              sequence="1"
+              action="action_du_an"/>
+
+    <!-- ========== QUẢN LÝ CÔNG VIỆC ========== -->
+    <menuitem id="menu_du_an_tasks"
+              name="Công Việc"
+              parent="menu_du_an_root"
+              sequence="20"/>
+
+    <menuitem id="menu_du_an_task_list"
+              name="Tất Cả Công Việc"
+              parent="menu_du_an_tasks"
+              sequence="1"
+              action="quan_ly_cong_viec.action_cong_viec"/>
+
+    <!-- ========== BÁO CÁO ========== -->
+    <menuitem id="menu_du_an_reports"
+              name="Báo Cáo"
+              parent="menu_du_an_root"
+              sequence="90"
+              groups="quan_ly_du_an.group_du_an_manager"/>
+
+    <menuitem id="menu_du_an_report_overview"
+              name="Tổng Quan Dự Án"
+              parent="menu_du_an_reports"
+              sequence="1"
+              action="action_du_an_report"/>
+
+    <!-- ========== CẤU HÌNH ========== -->
+    <menuitem id="menu_du_an_config"
+              name="Cấu Hình"
+              parent="menu_du_an_root"
+              sequence="99"
+              groups="quan_ly_du_an.group_du_an_manager"/>
+
+    <menuitem id="menu_du_an_config_tags"
+              name="Nhãn Công Việc"
+              parent="menu_du_an_config"
+              sequence="1"
+              action="quan_ly_cong_viec.action_cong_viec_tag"/>
+
+</odoo>

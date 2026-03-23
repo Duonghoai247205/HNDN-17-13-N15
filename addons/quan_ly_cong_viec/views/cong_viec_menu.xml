@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Menu Công Việc đứng độc lập (cho phép truy cập từ module Công Việc riêng) -->
+    <menuitem id="menu_cong_viec_root"
+              name="Quản Lý Công Việc"
+              sequence="21"
+              web_icon="quan_ly_cong_viec,static/description/icon.png"
+              groups="quan_ly_cong_viec.group_cong_viec_user"/>
+
+    <menuitem id="menu_cong_viec_all"
+              name="Tất Cả Công Việc"
+              parent="menu_cong_viec_root"
+              sequence="1"
+              action="action_cong_viec"/>
+
+    <menuitem id="menu_cong_viec_my"
+              name="Công Việc Của Tôi"
+              parent="menu_cong_viec_root"
+              sequence="2"
+              action="action_cong_viec_my"/>
+
+    <menuitem id="menu_cong_viec_config"
+              name="Cấu Hình"
+              parent="menu_cong_viec_root"
+              sequence="99"
+              groups="quan_ly_cong_viec.group_cong_viec_manager"/>
+
+    <menuitem id="menu_cong_viec_tag"
+              name="Nhãn"
+              parent="menu_cong_viec_config"
+              sequence="1"
+              action="action_cong_viec_tag"/>
+
+</odoo>
